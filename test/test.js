@@ -41,10 +41,24 @@ describe('module-replace', function() {
       assert.equal(require('fake-foo'), 'foo');
     });
 
-    describe('restore', function() {
-      it('restores the replacement', function() {
-        this.replacement.restore();
+    describe('package paths', function() {
+      beforeEach(function() {
+        this.replace
+          .module('react-native')
+          .with('react-native-mock/build/react-native');
+      });
 
+      it('works', function() {
+        assert(require('react-native').View);
+      });
+    });
+
+    describe('restore', function() {
+      beforeEach(function() {
+        this.replacement.restore();
+      });
+
+      it('restores the replacement', function() {
         try {
           require('./foo');
           throw new Error('should have thrown');
@@ -66,6 +80,18 @@ describe('module-replace', function() {
         } catch(e) {
           done();
         }
+    });
+  });
+
+  describe('defining exports', function() {
+    beforeEach(function() {
+      this.replace
+        .module('fake-foo')
+        .exports('stuff');
+    })
+
+    it('it returns given exports', function() {
+      assert.equal(require('fake-foo'), 'stuff');
     });
   });
 });
