@@ -1,7 +1,6 @@
+# module-replace
 
-### Replacing
-
-#### Local files
+## Replacing
 
 ```js
 var replace = require('module-replace')();
@@ -10,22 +9,18 @@ replace
   .module('./foo')
   .with('./bar');
 
-require('./foo') // => bar.exports
+require('./foo') // => (bar exports)
 ```
-
-#### `node_modules`
 
 ```js
 var replace = require('module-replace')();
 
 replace
-  .module('jquery')
-  .with('jquery-mock');
+  .module('some-libray')
+  .with('./some-library-mock');
 
-require('./foo') // => bar.exports
+require('./foo') // => (some-library-mock exports)
 ```
-
-#### Defining exports
 
 ```js
 var replace = require('module-replace')();
@@ -37,7 +32,7 @@ replace
 require('./foo') // => { myMethod: ... }
 ```
 
-### Restoring
+## Restoring
 
 ```js
 var replace = require('module-replace')();
