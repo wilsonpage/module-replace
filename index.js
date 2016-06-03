@@ -10,7 +10,6 @@ var path = require('path');
 
 var realResolve = CoreModule._resolveFilename;
 var modules = {};
-var self = this;
 
 /**
  * Exports
@@ -21,13 +20,16 @@ exports = module.exports = function(config) {
 };
 
 function Replacer(config) {
-  this.rootDir = (config && config.root) || __dirname;
+  config = config || {};
+  this.rootDir = config.root || __dirname;
+  this.shouldIgnore = this.createShouldIgnore(config.ignore);
   this.modules = {};
   debug('initialized', this.rootDir);
 }
 
-Replacer.prototype.ignore = function(pathname, context) {
-  return /node_modules/.test(context);
+Replacer.prototype.createShouldIgnore = function(ignore) {
+  if (typeof ignore == 'function') return ignore;
+  else return function() {}
 };
 
 Replacer.prototype.module = function(filepath) {
@@ -86,7 +88,7 @@ Module.prototype.exports = function(exports) {
 };
 
 Module.prototype.match = function(pathname, context) {
-  if (this.replacer.ignore(pathname, context)) return false;
+  if (this.replacer.shouldIgnore(pathname, context)) return false;
 
   var id = getId(pathname, path.resolve(context, '..'));
   debug('match', id, this.id);

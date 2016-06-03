@@ -94,4 +94,22 @@ describe('module-replace', function() {
       assert.equal(require('fake-foo'), 'stuff');
     });
   });
+
+  describe('ignore', function() {
+    it('does not replace if the ignore function returns true', function() {
+      var replace = replacer({
+        root: __dirname,
+        ignore: (pathname, context) => {
+          return !!~context.indexOf('baz');
+        }
+      });
+
+      replace
+        .module('./foo')
+        .exports('replaced');
+
+      assert.equal(require('./foo'), 'replaced');
+      assert.equal(require('./baz'), 'foo', './foo.js replacement ignored from inside baz.js');
+    });
+  });
 });
